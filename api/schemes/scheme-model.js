@@ -1,7 +1,18 @@
-function find() { // EXERCISE A
+const db = require('../../data/db-config');
+
+async function find() { // EXERCISE A
+  const schemes = await db('schemes as sc')
+    .select('sc.*')
+    .count('st.step_id')
+    .leftJoin('steps as st', 'sc.scheme_id', 'st.scheme_id')
+    .groupBy('sc.scheme_id')
+    .orderBy('sc.scheme_id')
+    
+    return schemes
   /*
     1A- Study the SQL query below running it in SQLite Studio against `data/schemes.db3`.
     What happens if we change from a LEFT join to an INNER join?
+    KM Answer: the have fun scheme will be dropped off the table. 
 
       SELECT
           sc.*,
@@ -17,7 +28,17 @@ function find() { // EXERCISE A
   */
 }
 
-function findById(scheme_id) { // EXERCISE B
+async function findById(scheme_id) { // EXERCISE B
+  const schemes = await db('schemes as sc')
+    .leftJoin('steps as st', 'sc.scheme_id', 'st.scheme_id')
+    .select('sc.scheme_name', 'st.*')
+    .where('sc.scheme_id', scheme_id)
+
+  let result = schemes.reduce((acc, scheme) => {
+    if(scheme){
+    console.log(scheme)
+    }
+  }, {})
   /*
     1B- Study the SQL query below running it in SQLite Studio against `data/schemes.db3`:
 
